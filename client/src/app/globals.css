@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-deep: #0A0A0A; /* Onyx 900 */
+  --bg-surface: #111111; /* Onyx 800 */
+  --bg-panel: rgba(255,255,255,0.02);
+  --border: rgba(255,255,255,0.06);
+  --border-glow: rgba(99,102,241,0.2);
+  --text-1: #EDEDED;
+  --text-2: #A1A1AA;
+  --text-3: #52525B;
+  --accent: #6366f1;
+  --accent-2: #818cf8;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-1);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  ::placeholder {
+    color: #52525B !important; /* Slate-600 / Visible Dark Gray */
+    opacity: 1 !important;
+  }
+}
+
+/* Elegant Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Custom Text Selection */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: white;
+}
+
+/* Prose Typography Overrides for Markdown */
+.prose {
+  color: var(--text-2);
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: var(--text-1);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.prose strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
+.prose a {
+  color: var(--accent-2);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.prose a:hover {
+  color: var(--accent);
+}
+.prose code {
+  color: var(--text-1);
+  background: var(--bg-surface);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+.prose pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+}
