@@ -1,33 +1,56 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require("openai");
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
+});
 
 /**
- * Generate content using Gemini 2.5 Flash
- * @param {string} prompt - The prompt to send
- * @param {boolean} jsonMode - Whether to force JSON output structure
- * @returns {Promise<string>} - The generated text
+ * Generate content using Groq
+ * @param {string} prompt
+ * @param {boolean} jsonMode
+ * @returns {Promise<string>}
  */
 const generateContent = async (prompt, jsonMode = false) => {
   try {
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-flash-latest',
-      generationConfig: {
-        temperature: 0.7,
-        responseMimeType: jsonMode ? 'application/json' : 'text/plain',
-      },
+    const completion = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an expert ATS Resume Analyzer and Career Assistant.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      response_format: jsonMode
+        ? { type: "json_object" }
+        : undefined,
     });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
+    return completion.choices[0].message.content;
   } catch (error) {
-    console.error('AI Generation Error:', error.message);
-    if (error.message.includes('429')) {
-      throw new Error('API Rate Limit Reached: Please wait 30 seconds before generating again.');
+    console.error("Groq AI Error:", error);
+
+    if (error.status === 429) {
+      throw new Error(
+        "Rate limit reached. Please wait a moment and try again."
+      );
     }
-    throw new Error('Failed to generate content. The AI service may be experiencing high demand.');
+
+    if (error.status >= 500) {
+      throw new Error(
+        "AI service is temporarily unavailable. Please try again later."
+      );
+    }
+
+    throw new Error(
+      error.message || "Failed to generate AI response."
+    );
   }
 };
 
